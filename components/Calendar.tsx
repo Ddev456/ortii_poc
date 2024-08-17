@@ -1,13 +1,13 @@
 'use client'
 
 import { cn } from "@/lib/utils";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { ArrowLeft, ArrowRight, Check, Maximize2, Minimize2 } from "lucide-react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { calendarData } from "./calendar-data";
 import { Badge } from "./ui/badge";
 import Image from "next/image";
 
-const weekDays = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+const weekDays = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
 const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", 
     "Octobre", "Novembre", "Décembre"];
 
@@ -27,52 +27,106 @@ const useWindowWidth = () => {
     return windowWidth;
 };
 
+const createUTCDate = (date: Date | string) => {
+    const d = new Date(date);
+    return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+};
+
 export const Calendar = () => {
-    const [currentDate, setCurrentDate] = useState(new Date());
+    const [currentDate, setCurrentDate] = useState(createUTCDate(new Date()));
+    const [isWeekView, setIsWeekView] = useState(false);
     const windowWidth = useWindowWidth();
-    const isSmallScreen = windowWidth < 640; // Ajustez ce seuil selon vos besoins
-
-    const handleNavigation = (direction: "left" | "right") => {
-        setCurrentDate(prevDate => {
-            const newDate = new Date(prevDate);
-            if (isSmallScreen) {
-                newDate.setDate(newDate.getDate() + (direction === "left" ? -1 : 1));
-            } else {
-                newDate.setDate(newDate.getDate() + (direction === "left" ? -7 : 7));
-            }
-            return newDate;
-        });
-    }
-
-    const getDaysToDisplay = useMemo(() => {
-        if (isSmallScreen) {
-            return [
-                new Date(currentDate.getTime() - 86400000),
-                currentDate,
-                new Date(currentDate.getTime() + 86400000)
-            ];
-        } else {
-            const startOfWeek = new Date(currentDate);
-            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + (currentDate.getDay() === 0 ? -6 : 1));
-            return Array.from({ length: 7 }, (_, i) => {
-                const day = new Date(startOfWeek);
-                day.setDate(startOfWeek.getDate() + i);
-                return day;
-            });
-        }
-    }, [currentDate, isSmallScreen]);
-
-    const eventsForDay = (day: Date) => {
-        const formattedDate = day.toISOString().split('T')[0];
-        
-        return calendarData.filter(event => {
-            const eventDate = new Date(event.date);
-            const eventDateFormatted = eventDate.toISOString().split('T')[0];
-            return eventDateFormatted === formattedDate;
-        });
+    const isSmallScreen = windowWidth < 640;
+    const eventRefs = useRef<{[key: string]: HTMLDivElement | null}>({});
+    
+    const toggleView = () => {
+        setIsWeekView(!isWeekView);
     };
 
-    const currentEvents = eventsForDay(currentDate);
+    const handleNavigation = (direction: "left" | "right") => {
+        if (isWeekView) {
+            setCurrentDate(prevDate => {
+                const newDate = new Date(prevDate);
+                newDate.setDate(newDate.getDate() + (direction === "left" ? -7 : 7));
+                return newDate;
+            });
+        } else {
+            setCurrentDate(prevDate => {
+                const newDate = new Date(prevDate);
+                newDate.setMonth(newDate.getMonth() + (direction === "left" ? -1 : 1));
+                return newDate;
+            });
+        }
+    };
+        
+    const getDaysToDisplay = useMemo(() => {
+        const year = currentDate.getUTCFullYear();
+        const month = currentDate.getUTCMonth();
+        const firstDayOfMonth = new Date(Date.UTC(year, month, 1));
+        const lastDayOfMonth = new Date(Date.UTC(year, month + 1, 0));
+
+        if (isWeekView) {
+            const startOfWeek = new Date(currentDate);
+            startOfWeek.setUTCDate(currentDate.getUTCDate() - currentDate.getUTCDay());
+            const days = [];
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(startOfWeek);
+                day.setUTCDate(startOfWeek.getUTCDate() + i);
+                days.push(day);
+            }
+            return days;
+        } else {
+
+        const startDate = new Date(firstDayOfMonth);
+        startDate.setUTCDate(startDate.getUTCDate() - startDate.getUTCDay());
+
+        const endDate = new Date(lastDayOfMonth);
+        endDate.setUTCDate(endDate.getUTCDate() + (6 - endDate.getUTCDay()));
+
+        const days = [];
+        let day = new Date(startDate);
+        while (day <= endDate) {
+            days.push(new Date(day));
+            day.setUTCDate(day.getUTCDate() + 1);
+        }
+
+        return days;
+        }
+    }, [currentDate, isWeekView]);
+
+    const eventsForRange = useMemo(() => {
+        const days = getDaysToDisplay;
+        const startDate = days[0];
+        const endDate = days[days.length - 1];
+        
+        return calendarData.filter(event => {
+            const eventDate = createUTCDate(event.date);
+            return eventDate >= startDate && eventDate <= endDate;
+        }).sort((a, b) => createUTCDate(a.date).getTime() - createUTCDate(b.date).getTime());
+    }, [getDaysToDisplay]);
+
+    const groupedEvents = useMemo(() => {
+        const grouped = eventsForRange.reduce((acc, event) => {
+            const eventDate = createUTCDate(event.date);
+            const dateString = eventDate.toISOString().split('T')[0];
+            if (!acc[dateString]) {
+                acc[dateString] = [];
+            }
+            acc[dateString].push(event);
+            return acc;
+        }, {} as Record<string, typeof eventsForRange>);
+
+        return Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
+    }, [eventsForRange]);
+
+
+    useEffect(() => {
+        const currentDateString = currentDate.toISOString().split('T')[0];
+        const element = eventRefs.current[currentDateString];
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [currentDate]);
 
     const getDateRangeString = () => {
         const days = getDaysToDisplay;
@@ -101,21 +155,34 @@ export const Calendar = () => {
             <button onClick={() => handleNavigation("right")} className="bg-slate-50 rounded-lg p-2 flex-shrink-0">
                     <ArrowRight className="w-4 sm:w-6 h-4 sm:h-6" />
             </button>
+            
+                    <button onClick={toggleView} className="bg-slate-50 rounded-lg p-2 ml-4">
+                        {isWeekView ? <Maximize2 className="w-6 h-6" /> : <Minimize2 className="w-6 h-6" />}
+                    </button>
+            
             </div>
-            <div className="flex gap-2 sm:gap-4 items-center overflow-x-auto p-4 justify-center">
-                
-                {getDaysToDisplay.map((day) => (
-                    <div key={day.toISOString()} 
+
+            <div className="w-[350px] sm:hidden flex gap-2 sm:gap-4 items-center overflow-x-auto p-4">    
+                {getDaysToDisplay.map((day) => {
+                                    const dayString = day.toISOString().split('T')[0];
+                                    return (
+                    <div key={dayString}
                          className={cn("relative w-16 sm:w-20 h-16 sm:h-20 bg-slate-50 shadow-md rounded-lg flex flex-col items-center justify-start p-2 font-bold text-center flex-shrink-0", {
                              "bg-green-600 text-white": day.toDateString() === currentDate.toDateString(),
                          })}
                          onClick={() => setCurrentDate(day)}>
                         
-                           { eventsForDay(day).length > 0 && (
+                           { eventsForRange.filter(event => {
+                                const eventDate = new Date(event.date);
+                                return eventDate.toDateString() === day.toDateString();
+                            }).length > 0 && (
                                <Badge className={cn("bg-green-600 absolute top-[-0.5rem] right-[-0.5rem] rounded-full",
                                 {"hidden": day.toDateString() === currentDate.toDateString(),}
                                 )}>
-                                   {eventsForDay(day).length}
+                                   {eventsForRange.filter(event => {
+                                        const eventDate = new Date(event.date);
+                                        return eventDate.toDateString() === day.toDateString();
+                                    }).length}
                                </Badge>
                            )}
                         
@@ -123,43 +190,104 @@ export const Calendar = () => {
                         <span>{day.getDate()}</span>
                         
                     </div>
-                ))}
-               
+                )})}
             </div>
+
+            <div className={cn("hidden sm:block overflow-x-auto sm:overflow-x-visible", {
+                "sm:h-32": isWeekView
+            })}>
+                <div className="grid grid-cols-7 gap-1 sm:gap-2 min-w-[640px] sm:min-w-full">
+                    {weekDays.map((day) => (
+                        <div key={day} className="text-center font-bold text-xs sm:text-sm">
+                            {day}
+                        </div>
+                    ))}
+                    {getDaysToDisplay.map((day) => {
+                        const dayString = day.toISOString().split('T')[0];
+                        return (
+                            <div 
+                                key={dayString}
+                                className={cn(
+                                    "relative aspect-square bg-slate-50 shadow-md rounded-lg flex flex-col items-center justify-start p-1 sm:p-2 font-bold text-center",
+                                    {
+                                        "bg-green-600 text-white": day.toDateString() === currentDate.toDateString(),
+                                        "opacity-50": day.getUTCMonth() !== currentDate.getUTCMonth()
+                                    }
+                                )}
+                                onClick={() => setCurrentDate(day)}
+                            >
+           
+                                <span className="text-xs sm:text-sm">{day.getUTCDate()}</span>
+                                { eventsForRange.filter(event => createUTCDate(event.date).toDateString() === day.toDateString()).length > 0 && (
+                                    <Badge className={cn(
+                                        "bg-green-600 absolute bottom-1 right-1 text-[0.5rem] sm:text-xs",
+                                        {"hidden": day.toDateString() === currentDate.toDateString()}
+                                    )}>
+                                        {eventsForRange.filter(event => createUTCDate(event.date).toDateString() === day.toDateString()).length}
+                                    </Badge>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
             <div className="flex-grow flex flex-col overflow-hidden">
-                <h3 className="text-lg sm:text-xl font-bold mb-4">Événements du {currentDate.toLocaleDateString('fr-FR')}</h3>
-                <div className="flex-grow overflow-y-auto">
-                    {currentEvents.length > 0 ? (
-                        currentEvents.map((event, index) => (
-                            <div key={index} className="my-3 shadow-md flex items-center gap-2 bg-slate-50 text-slate-800 p-2 mb-2 rounded h-24 ">
-                                <div className="relative">
-                                    <Image 
-                                        src="/event.jpg" 
-                                        alt="event" 
-                                        width={120} 
-                                        height={80} 
-                                        className={cn(
-                                            "rounded-lg",
-                                            event.checked && "opacity-50"
-                                        )} 
-                                    />
-                                    {event.checked && (
-                                        <div className="absolute inset-0 bg-green-500 bg-opacity-30 rounded-lg flex items-center justify-center">
-                                            <Check className="w-10 h-10 stroke-white" />
-                                        </div>
-                                    )}
+            <h3 className="text-lg sm:text-xl font-bold mb-4">Événements du {getDateRangeString()}</h3>
+            <div className="flex-grow overflow-y-auto">
+                {groupedEvents.length > 0 ? (
+                    groupedEvents.map(([dateString, events]) => (
+                        <div key={dateString}>
+                            <h3 className="text-md font-semibold mt-4 mb-2">
+                                {new Date(dateString).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                            </h3>
+                            {events.map((event, index) => {
+                                    const eventDate = createUTCDate(event.date);
+                                    return (
+                                        <div 
+                                            key={index} 
+                                            ref={(el) => {
+                                                if (el) eventRefs.current[dateString] = el;
+                                            }}
+                                            className={cn(
+                                                "my-3 flex items-center gap-2 bg-slate-50 text-slate-800 p-2 mb-2 rounded h-24",
+                                                {"border-l-4 border-green-600": dateString === currentDate.toISOString().split('T')[0]},
+                                                {"shadow-md": dateString === currentDate.toISOString().split('T')[0]}
+                                            )}
+                                        >
+                                                              <div className="relative">
+                                        <Image 
+                                            src="/event.jpg" 
+                                            alt="event" 
+                                            width={120} 
+                                            height={80} 
+                                            className={cn(
+                                                "rounded-lg",
+                                                event.checked && "opacity-50"
+                                            )} 
+                                        />
+                                        {event.checked && (
+                                            <div className="absolute inset-0 bg-green-500 bg-opacity-30 rounded-lg flex items-center justify-center">
+                                                <Check className="w-10 h-10 stroke-white" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col items-start">
+                                        <span className="font-bold">{event.title}</span>
+                                        <span className="text-sm font-normal">{event.category}</span>
+                                        <span className="text-xs text-gray-500">{eventDate.toLocaleDateString('fr-FR')}</span>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col items-start">
-                                    <span className="font-bold">{event.title}</span>
-                                    <span className="text-sm font-normal">{event.category}</span>
-                                </div>
+                                    );
+                                })}
                             </div>
                         ))
                     ) : (
-                        <p>Aucun événement pour cette date.</p>
+                        <p>Aucun événement pour cette période.</p>
                     )}
-                </div>
-            </div>
-        </div>
-    );
-}
+
+                                    </div>
+                                </div>
+                            
+                            </div>
+                        )}
