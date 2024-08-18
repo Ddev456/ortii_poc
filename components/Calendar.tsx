@@ -193,12 +193,12 @@ export const Calendar = () => {
                 )})}
             </div>
 
-            <div className={cn("hidden sm:block overflow-x-auto sm:overflow-x-visible", {
+            <div className={cn("w-[600px] mx-auto hidden sm:block overflow-x-auto sm:overflow-x-visible", {
                 "sm:h-32": isWeekView
             })}>
                 <div className="grid grid-cols-7 gap-1 sm:gap-2 min-w-[640px] sm:min-w-full">
                     {weekDays.map((day) => (
-                        <div key={day} className="text-center font-bold text-xs sm:text-sm">
+                        <div key={day} className="max-w-[80px] text-center font-bold text-xs sm:text-sm">
                             {day}
                         </div>
                     ))}
@@ -208,7 +208,7 @@ export const Calendar = () => {
                             <div 
                                 key={dayString}
                                 className={cn(
-                                    "relative aspect-square bg-slate-50 shadow-md rounded-lg flex flex-col items-center justify-start p-1 sm:p-2 font-bold text-center",
+                                    "max-w-[80px] relative aspect-square bg-slate-50 shadow-md rounded-lg flex flex-col items-center justify-start p-1 sm:p-2 font-bold text-center",
                                     {
                                         "bg-green-600 text-white": day.toDateString() === currentDate.toDateString(),
                                         "opacity-50": day.getUTCMonth() !== currentDate.getUTCMonth()
