@@ -76,12 +76,12 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm bg-slate-50 rounded-lg"
         />
          <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns
+              Informations
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -107,7 +107,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    <div className="rounded-md border">
+    <div className="rounded-lg border bg-slate-50">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -158,7 +158,7 @@ export function DataTable<TData, TValue>({
       onClick={() => table.previousPage()}
       disabled={!table.getCanPreviousPage()}
     >
-      Previous
+      Précédent
     </Button>
     <Button
       variant="outline"
@@ -166,7 +166,7 @@ export function DataTable<TData, TValue>({
       onClick={() => table.nextPage()}
       disabled={!table.getCanNextPage()}
     >
-      Next
+      Suivant
     </Button>
   </div>
 
