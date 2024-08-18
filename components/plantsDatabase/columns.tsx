@@ -3,6 +3,12 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Plant } from "./plants"
 
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
+
 import { ArrowUpDown, Carrot, Crop, Eye, MoreHorizontal, Sheet, Star } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -34,9 +40,9 @@ export const columns: ColumnDef<Plant>[] = [
     },
     cell: ({row}) => {
         return (
-            <div className="flex items-center gap-2">
-                <Image src={row.original.image} alt="plant" className="w-8 h-8 rounded-[.6rem]" width={80} height={80} />
-                <span>{row.original.name}</span>
+            <div className="flex items-center gap-2 ml-4">
+              <Image src={row.original.image} alt="plant" className="w-8 h-8 rounded-[.6rem]" width={80} height={80} />
+              <span>{row.original.name}</span>
             </div>
         )
     }
