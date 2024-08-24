@@ -30,10 +30,10 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import { plants } from "../plantsDatabase/plants";
 
 import { Fragment, useState } from "react"
 import { cn } from "@/lib/utils"
-import exp from "constants"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -48,6 +48,10 @@ export function DataTable<TData, TValue>({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [expandedRowIds, setExpandedRowIds] = useState<Set<string>>(new Set());
+    const expandedRowDescription = (rowId: string) => {
+      const plant = plants.find((plant) => (plant.id-1).toString() === rowId);
+      return plant ? `Détails supplémentaires pour ${plant.name}.` : '';
+    }
 
     const table = useReactTable({
       data,
@@ -161,6 +165,7 @@ export function DataTable<TData, TValue>({
                           <div className="p-4 bg-slate-100 rounded-lg shadow-sm h-[300px]">
                             {/* Remplacez ceci par le contenu que vous souhaitez afficher */}
                             <p>Détails supplémentaires pour {row.getValue('name')}</p>
+                            <p>{expandedRowDescription(row.id)}</p>
                           </div>
                         </TableCell>
                       </TableRow>
