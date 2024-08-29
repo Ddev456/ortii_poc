@@ -87,9 +87,9 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center py-4">
           <Input
             placeholder="Rechercher une plante..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            value={(table.getColumn("Plante")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
+              table.getColumn("Plante")?.setFilterValue(event.target.value)
             }
             className="max-w-sm bg-slate-50 rounded-lg"
           />
@@ -120,11 +120,11 @@ export function DataTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="rounded-lg border bg-slate-50 max-h-[calc(100vh-300px)] min-h-[calc(100vh-300px)] overflow-y-auto">
-          <Table>
-            <TableHeader>
+        <div className="rounded-lg border bg-slate-50 max-h-[500px] w-full overflow-y-auto">
+          <Table className="rounded-lg relative">
+            <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="bg-indigo-100">
                   {headerGroup.headers.map((header) => {
                     return (
                       <TableHead key={header.id}>
@@ -140,7 +140,7 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody>
+            <TableBody className="h-fit">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <Fragment key={row.id}>
@@ -164,7 +164,7 @@ export function DataTable<TData, TValue>({
                           {/* Contenu supplémentaire à afficher lors de l'expansion */}
                           <div className="p-4 bg-slate-100 rounded-lg shadow-sm h-[300px]">
                             {/* Remplacez ceci par le contenu que vous souhaitez afficher */}
-                            <p>Détails supplémentaires pour {row.getValue('name')}</p>
+                            <p>Détails supplémentaires pour {row.getValue('Plante')}</p>
                             <p>{expandedRowDescription(row.id)}</p>
                           </div>
                         </TableCell>
@@ -200,6 +200,7 @@ export function DataTable<TData, TValue>({
             Suivant
           </Button>
         </div>
+      
       </>
     )
 }

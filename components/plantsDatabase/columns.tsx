@@ -40,9 +40,9 @@ export const columns: ColumnDef<Plant>[] = [
     },
     cell: ({row}) => {
         return (
-            <div className="flex items-center gap-2 ml-4">
-              <Image src={row.original.image} alt="plant" className="w-8 h-8 rounded-[.6rem]" width={80} height={80} />
-              <span>{row.original.name}</span>
+            <div className="flex flex-col items-center gap-2 ml-4">
+              <Image src={row.original.image} alt="plant" className="w-20 h-16 rounded-[.6rem] relative" width={80} height={80} />
+              <span className="w-20 text-sm font-semibold text-white bg-indigo-300/65 rounded-lg px-2 py-1 absolute">{row.original.name}</span>
             </div>
         )
     }
@@ -61,6 +61,27 @@ export const columns: ColumnDef<Plant>[] = [
     id: "Catégorie",
     accessorKey: "category",
     header: "Catégorie",
+  },
+  {
+    id: "Sous-type",
+    accessorKey: "subType",
+    header: "Sous-type",
+  },
+  {
+    id: "Indice de rentabilité",
+    accessorKey: "EfficiencyIndex",
+    header: "Indice de rentabilité",
+    cell: ({ row }) => {
+        return (
+          <div className="flex items-center gap-2">
+            {row.original.efficiency && row.original.timeToHarvest ? (
+              Math.round(row.original.efficiency / row.original.timeToHarvest) + "%"
+            ) : (
+              "Données non connues"
+            )}
+          </div>
+        )
+      }
   },
   {
     id: "Difficulté",
@@ -105,15 +126,6 @@ export const columns: ColumnDef<Plant>[] = [
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Ajouter au potager</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip delayDuration={100}>
-                <TooltipTrigger asChild><Button variant="outline" className="flex items-center gap-2 bg-slate-50 hover:bg-slate-200"><Eye className="h-4 w-4" /></Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Voir la fiche infos</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
