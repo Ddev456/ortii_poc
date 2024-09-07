@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plant } from './plants';
+import { Plant } from '@/app/wiki/plants';
 
 import {
     Tooltip,
@@ -23,11 +23,11 @@ export const CropTooltip: React.FC<CropTooltipProps> = ({ cropPeriod, plantName 
       if (month >= period.start && month <= period.end) {
         switch (period.cropType) {
           case 'Seeding':
-            return { color: 'bg-lime-500', icon: <Sprout className="h-3 w-3 stroke-white" /> };
+            return { color: 'bg-lime-500', icon: <Sprout className="h-4 w-4 md:h-8 md:w-8 stroke-white" /> };
           case 'Plantation':
-            return { color: 'bg-indigo-500', icon: <Shovel className="h-3 w-3 stroke-white" /> };
+            return { color: 'bg-indigo-500', icon: <Shovel className="h-4 w-4 md:h-8 md:w-8 stroke-white" /> };
           case 'Harvest':
-            return { color: 'bg-orange-500', icon: <ShoppingBasket className="h-3 w-3 stroke-white" /> };
+            return { color: 'bg-orange-500', icon: <ShoppingBasket className="h-4 w-4 md:h-8 md:w-8 stroke-white" /> };
         }
       }
     }
@@ -68,7 +68,7 @@ export const CropTooltip: React.FC<CropTooltipProps> = ({ cropPeriod, plantName 
             <Tooltip>
               <TooltipTrigger>
                 <div className="flex flex-col items-center">
-                  <div className={`dot ${color} w-4 h-4 rounded-[.4rem] flex items-center justify-center`}>
+                  <div className={`dot ${color} w-6 h-6 md:w-10 md:h-10 rounded-[.4rem] flex items-center justify-center`}>
                     {icon}
                   </div>
                   <span className="h-4 text-xs">{index % 3 === 0 ? month : ''}</span>

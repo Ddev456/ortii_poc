@@ -34,6 +34,7 @@ import { plants } from "../plantsDatabase/plants";
 
 import { Fragment, useState } from "react"
 import { cn } from "@/lib/utils"
+import { CropTooltip } from "./CropTooltip"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -72,15 +73,22 @@ export function DataTable<TData, TValue>({
 
     const toggleRowExpansion = (rowId: string) => {
       setExpandedRowIds((prev) => {
-        const newExpanded = new Set(prev);
-        if (newExpanded.has(rowId)) {
-          newExpanded.delete(rowId);
+        const newExpanded = new Set<string>();
+        // Vérifier si la ligne est déjà ouverte
+        if (prev.has(rowId)) {
+          // Si oui, ne rien ajouter (fermer la ligne)
         } else {
+          // Sinon, ouvrir uniquement la ligne sélectionnée
           newExpanded.add(rowId);
         }
         return newExpanded;
       });
     };
+
+    const cropPeriod = (rowId: string) => {
+      const plant = plants.find((plant) => (plant.id-1).toString() === rowId);
+      return plant ? plant.cropPeriod : null;
+    }
 
     return (
       <>
@@ -166,6 +174,7 @@ export function DataTable<TData, TValue>({
                             {/* Remplacez ceci par le contenu que vous souhaitez afficher */}
                             <p>Détails supplémentaires pour {row.getValue('Plante')}</p>
                             <p>{expandedRowDescription(row.id)}</p>
+                            <CropTooltip plantName={plants.find((plant) => (plant.id-1).toString() === row.id)?.name ?? ""} cropPeriod={cropPeriod(row.id)} />
                           </div>
                         </TableCell>
                       </TableRow>

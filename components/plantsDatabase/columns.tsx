@@ -48,16 +48,6 @@ export const columns: ColumnDef<Plant>[] = [
     }
   },
   {
-    id: "Période de Culture",
-    accessorKey: "period",
-    header: "Période de Culture",
-    cell: ({ row }) => {
-        return (
-            <CropTooltip cropPeriod={row.original.cropPeriod} plantName={row.original.name} />
-        )
-    }
-  },
-  {
     id: "Catégorie",
     accessorKey: "category",
     header: "Catégorie",
