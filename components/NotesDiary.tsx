@@ -5,22 +5,10 @@ import z from 'zod';
 import { useToast } from "@/hooks/use-toast";
 import {
     Bird,
-    Book,
-    Bot,
-    Code2,
-    CornerDownLeft,
-    LifeBuoy,
-    Mic,
-    Paperclip,
     Rabbit,
     Settings,
-    Settings2,
     Share,
-    Square,
     SquarePlus,
-    SquareTerminal,
-    SquareUser,
-    Triangle,
     Turtle,
   } from "lucide-react"
   
@@ -44,17 +32,10 @@ import {
     SelectValue,
   } from "@/components/ui/select"
   import { Textarea } from "@/components/ui/textarea"
-  import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-  } from "@/components/ui/tooltip"
-import { TooltipProvider } from "@radix-ui/react-tooltip"
+
 import { MultiSelect } from './ui/multi-select';
 import { plants } from '@/app/wiki/plants';
 import { DatePicker } from './ui/date-picker';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import {
@@ -67,6 +48,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { NoteList } from './NoteList';
+import Image from 'next/image';
 
   export interface Note {
     content: string;
@@ -83,7 +65,7 @@ import { NoteList } from './NoteList';
 const formSchema = z.object({
   content: z.string().min(1),
   plants: z.array(z.string()).min(1),
-  tags: z.array(z.string()).min(1),
+  tags: z.string().min(1),
   date: z.date(),
 })
 
@@ -94,6 +76,10 @@ const formSchema = z.object({
     const [tags, setTags] = useState<string[]>([]);
 
     const handleAddNote = (note: Note) => {
+      const newNote = {
+        ...note,
+        tags: tags.filter(tag => note.tags.includes(tag)),
+      }
       setNotes((prevNotes) => [...prevNotes, note]);
     };
 
@@ -127,22 +113,27 @@ const formSchema = z.object({
     defaultValues: {
       content: "",
       plants: [],
-      tags: ["test", "test2"],
+      tags: "",
       date: new Date(),
     },
   })
 
   function handleSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
-    handleAddNote(data);
+    // Remplacez data.tags par le tableau tags
+    const noteWithTags = { ...data, tags: tags };
+    console.log(noteWithTags);
+    handleAddNote(noteWithTags);
     form.reset();
-  }
+    setTags([]);
+}
 
     return (
       <>
         <div className="flex flex-col">
           <header className="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
-            <h1 className="text-xl font-semibold">Playground</h1>
+            <h1 className="flex items-center gap-2 text-xl font-semibold">
+              <Image src="/__logo.svg" alt="ortii" width={35} height={35} />
+              <span>Carnet Potager</span></h1>
             <Drawer>
               <DrawerTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
