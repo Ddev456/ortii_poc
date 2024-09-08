@@ -57,6 +57,16 @@ import Image from 'next/image';
     date: Date;
   }
 
+  const availableTags = [
+    "Potager",
+    "Plantation",
+    "Culture",
+    "Récolte",
+    "Semis",
+    "Observations",
+    "Ravageurs & maladies"
+  ]
+
   export const description =
     "An AI playground with a sidebar navigation and a main content area. The playground has a header with a settings drawer and a share button. The sidebar has navigation links and a user menu. The main content area shows a form to configure the model and messages."
   
@@ -65,7 +75,7 @@ import Image from 'next/image';
 const formSchema = z.object({
   content: z.string().min(1),
   plants: z.array(z.string()).min(1),
-  tags: z.string().min(1),
+  tags: z.array(z.string()).min(1),
   date: z.date(),
 })
 
@@ -73,33 +83,9 @@ const formSchema = z.object({
 
     const [notes, setNotes] = useState<Note[]>([]);
 
-    const [tags, setTags] = useState<string[]>([]);
-
     const handleAddNote = (note: Note) => {
-      const newNote = {
-        ...note,
-        tags: tags.filter(tag => note.tags.includes(tag)),
-      }
       setNotes((prevNotes) => [...prevNotes, note]);
     };
-
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Enter" && event.currentTarget.value) {
-        event.preventDefault();
-          const input = event.currentTarget.value.trim();
-          if (input && tags.length < 5) {
-              setTags((prevTags) => [...prevTags, input]);
-              event.currentTarget.value = "";
-          }else {
-              toast({
-                  title: "Limite de 5 tags",
-                  description: "Vous avez dépassé le nombre maximal de tags autorisés.",
-                  variant: "destructive",
-              });
-              event.currentTarget.value = "";
-          }
-      }
-  };
 
   const groupedNotes = notes.reduce((acc, note) => {
     const week = note.date.toLocaleDateString('fr-FR', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -113,18 +99,14 @@ const formSchema = z.object({
     defaultValues: {
       content: "",
       plants: [],
-      tags: "",
+      tags: [],
       date: new Date(),
     },
   })
 
   function handleSubmit(data: z.infer<typeof formSchema>) {
-    // Remplacez data.tags par le tableau tags
-    const noteWithTags = { ...data, tags: tags };
-    console.log(noteWithTags);
-    handleAddNote(noteWithTags);
+    handleAddNote(data);
     form.reset();
-    setTags([]);
 }
 
     return (
@@ -305,14 +287,16 @@ const formSchema = z.object({
             <FormItem>
               <FormLabel>Tags / Mots-clés</FormLabel>
               <FormControl>
-              <Input
-            id="tags"
-            type="text"
-            placeholder="Tomate, Permaculture .."
-            value={field.value}
-            onChange={field.onChange}
-            onKeyDown={handleKeyDown}
-          />
+                <MultiSelect
+                value={field.value}
+                      onValueChange={(value) => field.onChange(value)}
+                      options={availableTags.map(tag => ({ value: tag, label: tag }))}
+                      defaultValue={field.value}
+                      placeholder="Sélectionner des mots-clés"
+                      variant="inverted"
+                      animation={2}
+                      maxCount={3}
+                    />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -320,13 +304,7 @@ const formSchema = z.object({
         />
 
                 
-        <div className="flex flex-wrap gap-2">
-            {tags.map((tag, index) => (
-              <Badge key={index} variant="outline" className={`bg-${['green-300', 'indigo-300', 'orange-300', 'slate-300', 'blue-300'][index % 5]}`}>
-                {tag}
-              </Badge>
-            ))}
-          </div>
+       
           </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -361,12 +339,13 @@ const formSchema = z.object({
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Contenu</FormLabel>
+              <FormLabel>Contenu (max: 700 caractères par note)</FormLabel>
               <FormControl>
                 <Textarea
+                maxLength={700}
                   {...field}
                   placeholder="Note et observations du jardin .."
-                  className="min-h-[9.5rem]"
+                  className="min-h-[7rem]"
                 />
               </FormControl>
               <FormMessage />
@@ -386,16 +365,14 @@ const formSchema = z.object({
               </Form>
             </div>
           
-            <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2">
+            <div className="relative flex h-full min-h-[30vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2">
               <Badge variant="outline" className="absolute right-3 top-3">
                 Journal
               </Badge>
               <div className="flex-1">
       
     
-      <h3 className="text-md font-semibold mt-4 mb-2">
-        Semaine {/* Vous pouvez personnaliser le titre ici */}
-      </h3>
+      
       <NoteList notes={notes} />
 
 

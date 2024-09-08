@@ -3,7 +3,7 @@
 import * as React from "react"
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
-
+import { fr } from 'date-fns/locale/fr'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -25,12 +25,13 @@ export function DatePicker({ selected, onChange }: { selected?: Date, onChange: 
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {selected ? format(selected, "PPP") : <span>Sélectionner une date</span>}
+            {selected ? format(selected, "PPP", { locale: fr }) : <span>Sélectionner une date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
+          locale={fr}
           selected={selected}
           onSelect={(date) => onChange(date as Date)}
           initialFocus

@@ -175,7 +175,7 @@ export function Calendar() {
 								{dayEvents.map((event, eventIndex) => (
 									<div
 										key={event.id}
-										className="flex gap-1 w-full h-6 mt-0.5 shadow-md md:rounded-lg p-1"
+										className="flex items-center border border-border gap-1 w-full h-6 mt-0.5 md:rounded-lg p-1"
 									>
 										<div
 											className={`w-1 p-0.5 text-[10px] md:text-sm md:w-8 md:p-1 md:rounded-full ${event.color}`}
@@ -229,7 +229,7 @@ export function Calendar() {
 								{dayEvents.map((event, eventIndex) => (
 									<div
 										key={event.id}
-										className="flex gap-1 w-full h-6 mt-0.5 shadow-md md:rounded-lg p-1"
+										className="flex gap-1 w-full h-6 mt-0.5 md:rounded-lg p-1"
 									>
 										<div className={`w-8 p-1 md:rounded-full ${event.color}`} />
 										<span>{event.title}</span>

@@ -3,7 +3,7 @@ import { plants } from "@/app/wiki/plants";
 import { CropTooltip } from "./CropTooltip";
 
 export const WikiSheet = ({ plant }: { plant: string }) => {
-    const selectedPlant = plants.find(item => item.name === plant);
+    const selectedPlant = plants.find(item => item.name.toLowerCase() === plant.toLowerCase());
     const level = (difficulty: Number) => {
         if (difficulty === 1) {
             return "Cutlure Facile";
