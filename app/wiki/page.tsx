@@ -1,7 +1,9 @@
 import { SearchBar } from "@/components/SearchBar";
 
 export default function WikiPage() {
-    return (
-        <SearchBar />
-    )
+	return (
+		<div className="flex flex-col gap-4">
+			<SearchBar />
+		</div>
+	);
 }
