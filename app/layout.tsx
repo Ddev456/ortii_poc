@@ -24,7 +24,7 @@ export default function RootLayout({
 				<NavigationTabs />
 				<MobileNavigationTabs />
 				<TopNav />
-				<div className="min-h-[80vh] py-6 px-[2rem] lg:px-[6rem] md:mb-[150px]">
+				<div className="min-h-[50vh] py-6 px-[2rem] lg:px-[6rem] md:mb-[150px]">
 					{children}
 				</div>
 				<Toaster />

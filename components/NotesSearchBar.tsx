@@ -1,6 +1,7 @@
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 import type { Note } from "./NotesDiary";
+import { Input } from "./ui/input";
 
 export const NotesSearchBar = ({
 	notes,
@@ -15,24 +16,15 @@ export const NotesSearchBar = ({
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="relative w-48 md:w-96 lg:w-[800px] flex items-center gap-4">
-				<input
-					type="text"
-					className="w-full rounded-lg border border-border p-2 pl-10 pr-10 text-md"
+			<div className="relative flex-1 md:grow-0 w-64 md:w-96 lg:w-[400px]">
+				<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+				<Input
+					type="search"
 					placeholder="Rechercher une note"
-					value={inputValue}
-					onChange={(e) => handleSearch(e.target.value)}
+					className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+					value={inputValue || ""}
+					onChange={(e) => handleSearch(e.target.value.trim())}
 				/>
-				<span className="absolute left-3 top-3">
-					<Search className="size-4 text-muted-foreground" />
-				</span>
-				<button
-					type="button"
-					className="absolute right-3 top-3.5"
-					onClick={() => handleSearch("")}
-				>
-					<X className="size-4 text-muted-foreground" />
-				</button>
 			</div>
 		</div>
 	);

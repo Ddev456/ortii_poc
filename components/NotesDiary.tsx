@@ -126,7 +126,7 @@ export function NotesDiary() {
 	}
 
 	return (
-		<main className="grid gap-4 overflow-auto md:p-4 md:grid-cols-2 lg:grid-cols-3">
+		<main className="flex gap-2 md:p-4">
 			<div
 				className="relative hidden flex-col items-start gap-8 md:flex"
 				x-chunk="dashboard-03-chunk-0"
@@ -257,7 +257,7 @@ export function NotesDiary() {
 				</Form>
 			</div>
 
-			<div className="relative flex h-full min-h-[80vh] md:min-h-[30vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2">
+			<div className="relative flex h-full min-h-[80vh] md:min-h-[70vh] md:mt-4 flex-col rounded-xl bg-muted/50 p-4">
 				<Badge variant="outline" className="absolute right-3 top-3">
 					Journal
 				</Badge>
