@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
-import { Carrot, ChevronRight } from "lucide-react";
+import { Carrot, ChevronRight, Heart } from "lucide-react";
 import Link from "next/link";
 
 const popularPlants = [
@@ -51,7 +51,9 @@ export const MostPopularPlants = () => {
 									<span className="text-md font-medium">{plant.name}</span>
 									<div className="flex">
 										<span>(</span>
-										<span className="text-red-500">♥️</span>
+										<span className="text-red-500">
+											<Heart className="size-4 stroke-red-500 fill-red-200" />
+										</span>
 										<span>{plant.likes}</span>
 										<span>)</span>
 									</div>
