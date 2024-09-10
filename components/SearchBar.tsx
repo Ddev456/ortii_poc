@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight, Cross, GraduationCap, Search, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardTitle } from "./ui/card";
 import { MostPopularPlants } from "./MostPopularPlants";
 import Image from "next/image";
@@ -9,6 +9,8 @@ import Link from "next/link";
 import { plants } from "@/app/wiki/plants";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useTour } from "@reactour/tour";
+import { useRouter } from "next/navigation";
 
 export const SearchBar = () => {
 	const [inputValue, setInputValue] = useState("");
@@ -26,12 +28,12 @@ export const SearchBar = () => {
 					<Input
 						type="search"
 						placeholder="Rechercher une plante"
-						className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+						className="wikiStep1 w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
 						value={inputValue || ""}
 						onChange={(e) => setInputValue(e.target.value.trim())}
 					/>
 				</div>
-				<Button>
+				<Button className="wikiStep2">
 					<GraduationCap className="size-4" />
 					<span>Tutoriels</span>
 				</Button>
@@ -52,7 +54,7 @@ export const SearchBar = () => {
 							>
 								<Link
 									href={`/wiki/${plant.name}`}
-									className="flex gap-1 font-medium items-center"
+									className="wikiStep3 flex gap-1 font-medium items-center"
 								>
 									<Image
 										src={plant.image}

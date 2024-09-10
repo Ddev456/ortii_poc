@@ -6,6 +6,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { TopNav } from "@/components/TopNav";
 import { MobileNavigationTabs } from "@/components/MobileNavigationTabs";
 
+import { TourProvider } from "@reactour/tour";
+import { ReactourWrapper } from "@/components/ReactourWrapper";
+import { StepTourWrapper } from "@/components/StepTourWrapper";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,13 +25,17 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${inter.className}`}>
-				<NavigationTabs />
-				<MobileNavigationTabs />
-				<TopNav />
-				<div className="min-h-[50vh] py-6 px-[2rem] lg:px-[6rem] md:mb-[150px]">
-					{children}
-				</div>
-				<Toaster />
+				<ReactourWrapper>
+					<StepTourWrapper>
+						<NavigationTabs />
+						<MobileNavigationTabs />
+						<TopNav />
+						<div className="min-h-[50vh] py-6 px-[2rem] lg:px-[6rem] md:mb-[150px]">
+							{children}
+						</div>
+						<Toaster />
+					</StepTourWrapper>
+				</ReactourWrapper>
 			</body>
 		</html>
 	);

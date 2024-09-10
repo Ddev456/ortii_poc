@@ -6,24 +6,8 @@ import Link from "next/link";
 export default function Home() {
 	return (
 		<div className="flex flex-col gap-4 items-center justify-center">
-			<Link
-				href="/calendar"
-				className={cn(buttonVariants({ variant: "default" }))}
-			>
-				Calendrier
-			</Link>
-			<Link
-				href="/database"
-				className={cn(buttonVariants({ variant: "default" }))}
-			>
-				Base de données
-			</Link>
-			<Link
-				href="/threads"
-				className={cn(buttonVariants({ variant: "default" }))}
-			>
-				Fils de discussion
-			</Link>
+			<h3 className="text-xl font-bold">Accueil</h3>
+			<Image src="/france-departments.svg" alt="map" width={400} height={400} />
 		</div>
 	);
 }

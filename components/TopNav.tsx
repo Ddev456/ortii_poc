@@ -1,36 +1,27 @@
-import { Bird, Bold, Rabbit, Settings, Share, Turtle, Zap } from "lucide-react";
+"use client";
+
+import { Zap } from "lucide-react";
 import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./ui/select";
-import { Textarea } from "./ui/textarea";
-import { Input } from "./ui/input";
-import { DatePicker } from "./ui/date-picker";
-import {
-	Drawer,
-	DrawerContent,
-	DrawerDescription,
-	DrawerHeader,
-	DrawerTitle,
-	DrawerTrigger,
-} from "./ui/drawer";
+
 import Image from "next/image";
+import { Wizard } from "./Wizard";
+import React from "react";
+import { useTour } from "@reactour/tour";
 
 export const TopNav = () => {
+	const { setIsOpen } = useTour();
 	return (
-		<header className="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
-			<h1 className="flex items-center gap-2 text-xl font-semibold">
+		<header className="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4 flex justify-between">
+			<h1 className="tour-step-1 flex items-center gap-2 text-xl font-semibold">
 				<Image src="/__logo.svg" alt="ortii" width={40} height={40} />
 			</h1>
-
-			<Button variant="outline" size="sm" className="ml-auto gap-1.5 text-sm">
+			<Button
+				variant="ghost"
+				className="text-white p-2 rounded"
+				onClick={() => setIsOpen(true)}
+			>
 				<Zap className="size-4 stroke-orange-600 fill-orange-200" />
-				<span className="text-sm text-muted-foreground">Assistant</span>
+				<span className="text-foreground">Assistant</span>
 			</Button>
 		</header>
 	);

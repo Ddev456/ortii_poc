@@ -1,31 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Wizard } from "./Wizard";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
 	{
 		href: "/",
 		label: "Accueil",
 		icon: <Image src="/home.svg" alt="ortii" width={25} height={25} />,
+		disable: false,
 	},
 	{
 		href: "/wiki",
 		label: "Plantes",
 		icon: <Image src="/wikiIcon.svg" alt="ortii" width={25} height={25} />,
+		disable: false,
 	},
 	{
 		href: "/carnet",
 		label: "Carnet",
 		icon: <Image src="/calendarIcon.svg" alt="ortii" width={25} height={25} />,
+		disable: false,
 	},
 	{
-		href: "/share",
+		href: "#",
 		label: "Partage",
 		icon: <Image src="/shareIcon.svg" alt="ortii" width={25} height={25} />,
-	},
-	{
-		href: "/settings",
-		label: "Préférences",
-		icon: <Image src="/settings.svg" alt="settings" width={25} height={25} />,
+		disable: true,
 	},
 ];
 
@@ -36,12 +37,16 @@ export const NavigationTabs = () => {
 				<Link
 					key={link.href}
 					href={link.href}
-					className="flex flex-col items-center gap-1 text-sm font-normal text-foreground px-2 py-4"
+					className={cn(
+						link.disable && "cursor-not-allowed opacity-50",
+						"flex flex-col items-center gap-1 text-sm font-normal text-foreground px-2 py-4",
+					)}
 				>
 					{link.icon}
 					<span>{link.label}</span>
 				</Link>
 			))}
+			<Wizard />
 		</nav>
 	);
 };

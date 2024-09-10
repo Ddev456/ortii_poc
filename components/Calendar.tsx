@@ -108,7 +108,7 @@ export function Calendar() {
 
 	return (
 		<div className="flex flex-col">
-			<div className="flex justify-center items-center mb-4">
+			<div className="wikiStep4 flex justify-center items-center mb-4">
 				<button type="button" onClick={handlePrev} className="px-2 py-1">
 					<ChevronLeft className="size-8" />
 				</button>
@@ -175,7 +175,7 @@ export function Calendar() {
 								{dayEvents.map((event, eventIndex) => (
 									<div
 										key={event.id}
-										className="flex items-center border border-border gap-1 w-full h-6 mt-0.5 md:rounded-lg p-1"
+										className="calendarStep2 flex items-center border border-border gap-1 w-full h-6 mt-0.5 md:rounded-lg p-1"
 									>
 										<div
 											className={`w-1 p-0.5 text-[10px] md:text-sm md:w-8 md:p-1 md:rounded-full ${event.color}`}
